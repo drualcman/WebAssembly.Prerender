@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Hosting.Server.Features;
+using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.ResponseCompression;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +8,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddSingleton<HttpClient>(sp =>
+        {
+            // Get the address that the app is currently running at
+            var server = sp.GetRequiredService<IServer>();
+            var addressFeature = server.Features.Get<IServerAddressesFeature>();
+            string baseAddress = addressFeature.Addresses.First();
+            return new HttpClient { BaseAddress = new Uri(baseAddress) };
+        });
 
 var app = builder.Build();
 
@@ -31,6 +41,6 @@ app.UseRouting();
 
 app.MapRazorPages();
 app.MapControllers();
-app.MapFallbackToFile("/_Host");
+app.MapFallbackToPage("/_Host");
 
 app.Run();
