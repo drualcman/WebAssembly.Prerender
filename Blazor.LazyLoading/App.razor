@@ -1,0 +1,52 @@
+﻿@using System.Reflection;
+@using Blazor.LazyLoading.Interfaces;
+@using Microsoft.AspNetCore.Components.WebAssembly.Services
+@inject LazyAssemblyLoader AssemblyLoader
+
+@inject ILazyLoadModules LazyLoading
+
+<Router AppAssembly="@typeof(App).Assembly"
+        AdditionalAssemblies="@LazyLoading.LazyLoadedAssemblies"
+        OnNavigateAsync=LazyLoading.OnNavigatAsync>
+    <Navigating>
+        <div style="padding:20px;background-color:blue;color:white">
+            <p>Loading the requested page&hellip;</p>
+        </div>
+    </Navigating>
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+    <NotFound>
+        <PageTitle>Not found</PageTitle>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <p role="alert">Sorry, there's nothing at this address.</p>
+        </LayoutView>
+    </NotFound>
+</Router>
+
+@code {
+    private List<Assembly> lazyLoadedAssemblies = new();
+
+    private async Task OnNavigateAsync(NavigationContext args)
+    {
+
+        Console.WriteLine($"OnNavigateAsync: {args.Path}");
+        Console.WriteLine($"LazyLoading.LazyLoadedAssemblies: {LazyLoading.LazyLoadedAssemblies.Count}");
+        try
+        {
+            await LazyLoading.OnNavigatAsync();
+            if(args.Path == "counter")
+            {
+                // IEnumerable<Assembly> assemblies = await AssemblyLoader.LoadAssembliesAsync(
+                //     new[] { "BlazorBasics.InputFileExtended.dll" });
+                // lazyLoadedAssemblies.AddRange(assemblies);
+            }
+                // await LazyLoading.OnNavigatAsync();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+}
