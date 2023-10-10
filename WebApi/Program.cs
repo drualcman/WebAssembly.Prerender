@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 //builder.Services.AddEndpointsApiExplorer();
 //builder.Services.AddSwaggerGen();
 builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages(); 
+builder.Services.AddRazorPages();
 builder.Services.AddSingleton<HttpClient>(sp =>
         {
             // Get the address that the app is currently running at
@@ -26,8 +26,6 @@ var app = builder.Build();
 //    app.UseSwagger();
 //    app.UseSwaggerUI();
 //}
-
-app.UseHttpsRedirection();
 
 var summaries = new[]
 {
@@ -47,12 +45,12 @@ app.MapGet("/weatherforecast", () =>
     return forecast;
 })
 .WithName("GetWeatherForecast")
-.WithOpenApi(); 
-            
+.WithOpenApi();
+
 
 app.UseHttpsRedirection();
 
-app.UseStaticFiles();    
+app.UseStaticFiles();
 app.MapRazorPages();
 app.MapFallbackToPage("/_Host");
 
