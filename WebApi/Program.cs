@@ -1,5 +1,5 @@
-using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Hosting.Server.Features;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,7 +50,10 @@ app.MapGet("/weatherforecast", () =>
 
 app.UseHttpsRedirection();
 
+app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
+app.UseRouting();
+
 app.MapRazorPages();
 app.MapFallbackToPage("/_Host");
 
